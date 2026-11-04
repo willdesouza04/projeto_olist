@@ -95,15 +95,20 @@ def numero(valor, casas=0) -> str:
     """96.470 — milhar com ponto."""
     if pd.isna(valor):
         return "–"
+    # Formata com separador de milhar (',') e decimal ('.')
     formato = f"{{:,.{casas}f}}"
     texto = formato.format(float(valor))
-    texto = texto.replace(",", ".").replace("TEMP", ",")
-    # Remove a parte decimal se casas=0
-    if casas == 0 and "." in texto:
-        texto = texto.split(".")[0]
-        # Recoloca os pontos de milhar
-        texto = f"{int(float(texto)):,}".replace(",", ".")
-    return texto
+    # Troca: milhar recebe ponto, decimal recebe vírgula
+    # Exemplo: "96,470.50" vira "96.470,50"
+    partes = texto.split(".")
+    if casas == 0:
+        # Sem casas decimais: "96,470" vira "96.470"
+        return partes[0].replace(",", ".")
+    else:
+        # Com casas decimais: "96,470.50" vira "96.470,50"
+        milhar = partes[0].replace(",", ".")
+        decimal = partes[1] if len(partes) > 1 else ""
+        return f"{milhar},{decimal}"
 
 
 # ---------- Gráficos ----------
